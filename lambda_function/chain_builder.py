@@ -60,9 +60,10 @@ def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
     # スニペットの読み込み
     snippet_map = first_step.get("snippets", {})
     partial_dict = {}
-    for snippet_key, snippet_path in snippet_map.items():
-        snippet_content = Path(snippet_path).read_text(encoding="utf-8")
-        partial_dict[snippet_key] = snippet_content
+    if snippet_map is not None:
+        for snippet_key, snippet_path in snippet_map.items():
+            snippet_content = Path(snippet_path).read_text(encoding="utf-8")
+            partial_dict[snippet_key] = snippet_content
     
     # プロンプトテンプレートの構築
     prompt = PromptTemplate(
@@ -96,9 +97,10 @@ def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
         # スニペットの読み込み
         snippet_map = step.get("snippets", {})
         partial_dict = {}
-        for snippet_key, snippet_path in snippet_map.items():
-            snippet_content = Path(snippet_path).read_text(encoding="utf-8")
-            partial_dict[snippet_key] = snippet_content
+        if snippet_map is not None:
+            for snippet_key, snippet_path in snippet_map.items():
+                snippet_content = Path(snippet_path).read_text(encoding="utf-8")
+                partial_dict[snippet_key] = snippet_content
         
         # 入力変数を前ステップの出力から取得するマッピング
         chain_input = {var: itemgetter(var) for var in input_vars}
