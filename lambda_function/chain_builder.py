@@ -11,6 +11,12 @@ from langchain.prompts import PromptTemplate
 # LangSmithトレーシングの設定
 LANGSMITH_TRACING: bool = os.getenv("LANGSMITH_TRACING", "False").lower() == "true"
 
+# LangSmithトレーシングを明示的に無効化
+os.environ["LANGCHAIN_TRACING_V2"] = "false"
+os.environ["LANGCHAIN_ENDPOINT"] = ""
+os.environ["LANGCHAIN_API_KEY"] = ""
+os.environ["LANGCHAIN_PROJECT"] = ""
+
 def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
     """
     YAMLファイルを読み込み、RunnableSequenceを構築します。
