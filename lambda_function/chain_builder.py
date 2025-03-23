@@ -8,6 +8,8 @@ from langchain_core.runnables import RunnableSequence, RunnablePassthrough
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 
+# LangSmithトレーシングの設定
+LANGSMITH_TRACING: bool = os.getenv("LANGSMITH_TRACING", "False").lower() == "true"
 
 def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
     """
