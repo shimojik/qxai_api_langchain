@@ -6,6 +6,7 @@ from operator import itemgetter
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence, RunnablePassthrough
 from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain.prompts import PromptTemplate
 
 # LangSmithトレーシングの設定
@@ -16,6 +17,44 @@ os.environ["LANGCHAIN_TRACING_V2"] = "false"
 os.environ["LANGCHAIN_ENDPOINT"] = ""
 os.environ["LANGCHAIN_API_KEY"] = ""
 os.environ["LANGCHAIN_PROJECT"] = ""
+
+def get_llm_from_config(config: Dict[str, Any]) -> Any:
+    """
+    YAMLの設定から適切なLLMインスタンスを生成します。
+    
+    Args:
+        config: YAMLの設定辞書
+        
+    Returns:
+        LLMインスタンス
+    """
+    model_config = config.get("model", {})
+    provider = model_config.get("provider", "openai")
+    model_name = model_config.get("name", "gpt-4o")
+    temperature = model_config.get("temperature", 0.7)
+
+    if provider == "openai":
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set.")
+        return ChatOpenAI(
+            model=model_name,
+            temperature=temperature,
+            openai_api_key=api_key,
+            streaming=False
+        )
+    elif provider == "anthropic":
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
+        return ChatAnthropic(
+            model=model_name,
+            temperature=temperature,
+            anthropic_api_key=api_key,
+            streaming=False
+        )
+    else:
+        raise ValueError(f"Unsupported provider: {provider}")
 
 def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
     """
@@ -36,18 +75,8 @@ def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
     if not steps:
         raise ValueError(f"No steps defined in {yaml_path}.")
 
-    # 環境変数からOpenAI APIキー取得
-    openai_api_key = os.environ.get("OPENAI_API_KEY")
-    if not openai_api_key:
-        raise ValueError("OPENAI_API_KEY environment variable is not set.")
-
-    # LLMインスタンスの生成（シングルトン）
-    llm = ChatOpenAI(
-        model="gpt-4o",
-        temperature=0.7,
-        openai_api_key=openai_api_key,
-        streaming=False  # ストリーミングを無効化
-    )
+    # LLMインスタンスの生成
+    llm = get_llm_from_config(config)
 
     # 最初のステップ
     first_step = steps[0]

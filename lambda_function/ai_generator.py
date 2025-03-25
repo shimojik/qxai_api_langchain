@@ -10,6 +10,11 @@ from pathlib import Path
 TEMPLATE_YAML = """\
 name: {chain_name}
 description: "このチェーンの目的を記述してください"
+model:
+  provider: "openai"  # "openai" または "anthropic"
+  name: "gpt-4o"     # OpenAI: "gpt-4o" など
+                      # Anthropic: "claude-3-5-sonnet-latest" など
+  temperature: 0.7    # 0.0 から 1.0 の間の値
 steps:
   - name: step1
     prompt_file: prompts/{chain_name}_step1.md

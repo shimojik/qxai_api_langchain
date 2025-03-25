@@ -1,5 +1,9 @@
 name: chat_response
 description: "このチェーンの目的を記述してください"
+model:
+  provider: 'anthropic' # or 'anthropic'
+  name: 'claude-3-5-sonnet-latest' # or 'claude-3-5-sonnet-latest'
+  tempurature: 1
 steps:
   - name: step1
     prompt_file: prompts/chat_response_step1.md
