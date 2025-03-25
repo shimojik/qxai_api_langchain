@@ -18,9 +18,9 @@ elif [ -f .env ]; then
 fi
 
 # API キーが設定されていない場合は警告
-if [ -z "$OPENAI_API_KEY" ] || [ -z "$APP_API_KEY" ]; then
+if [ -z "$OPENAI_API_KEY" ] || [ -z "$APP_API_KEY" ] || [ -z "$ANTHROPIC_API_KEY" ]; then
   echo "警告: 必要なAPI鍵が設定されていません。.env.productionまたは.envファイルを確認してください。"
-  echo "必要な環境変数: OPENAI_API_KEY, APP_API_KEY"
+  echo "必要な環境変数: OPENAI_API_KEY, APP_API_KEY, ANTHROPIC_API_KEY"
   exit 1
 fi
 
@@ -109,7 +109,7 @@ if [ -z "$ROLE_ARN" ]; then
 fi
 
 # 環境変数の準備
-ENV_VARS="{\"Variables\":{\"OPENAI_API_KEY\":\"${OPENAI_API_KEY}\",\"APP_API_KEY\":\"${APP_API_KEY}\"}}"
+ENV_VARS="{\"Variables\":{\"OPENAI_API_KEY\":\"${OPENAI_API_KEY}\",\"APP_API_KEY\":\"${APP_API_KEY}\",\"ANTHROPIC_API_KEY\":\"${ANTHROPIC_API_KEY}\"}}"
 
 # Lambda関数の存在確認
 FUNCTION_EXISTS=$(aws lambda list-functions --query "Functions[?FunctionName=='${FUNCTION_NAME}'].FunctionName" --output text --profile ${AWS_PROFILE} --no-cli-pager)
