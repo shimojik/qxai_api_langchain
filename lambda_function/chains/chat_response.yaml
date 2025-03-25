@@ -1,0 +1,7 @@
+name: chat_response
+description: "このチェーンの目的を記述してください"
+steps:
+  - name: step1
+    prompt_file: prompts/chat_response_step1.md
+    input_variables: [chat_history, new_message]
+    output_key: result

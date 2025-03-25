@@ -45,8 +45,19 @@ def main():
         print("Usage: python ai_generator.py <chain_name>")
         sys.exit(1)
 
+    # スクリプトの実行場所に関わらず、lambda_function ディレクトリを基準にする
+    script_dir = Path(__file__).resolve().parent
+    lambda_function_dir = script_dir
+    
+    # スクリプトが lambda_function 内にない場合の対応
+    if lambda_function_dir.name != "lambda_function":
+        lambda_function_dir = script_dir / "lambda_function"
+        if not lambda_function_dir.exists():
+            print("Error: lambda_function directory not found.")
+            sys.exit(1)
+
     chain_name = sys.argv[1]
-    chain_yaml_path = Path(f"chains/{chain_name}.yaml")
+    chain_yaml_path = lambda_function_dir / f"chains/{chain_name}.yaml"
 
     if chain_yaml_path.exists():
         # 既に存在する場合、上書きしていいか確認
@@ -92,7 +103,7 @@ def main():
             continue
             
         for snippet_key, snippet_file in snippets.items():
-            snippet_path = Path(snippet_file)
+            snippet_path = lambda_function_dir / snippet_file
             snippet_path.parent.mkdir(parents=True, exist_ok=True)
             
             if not snippet_path.exists():
@@ -109,7 +120,7 @@ def main():
         if not prompt_file:
             continue
             
-        prompt_path = Path(prompt_file)
+        prompt_path = lambda_function_dir / prompt_file
         # ディレクトリがなければ作成
         prompt_path.parent.mkdir(parents=True, exist_ok=True)
         
