@@ -43,9 +43,10 @@ def build_chain_from_yaml(yaml_path: str) -> RunnableSequence:
 
     # LLMインスタンスの生成（シングルトン）
     llm = ChatOpenAI(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         temperature=0.7,
-        openai_api_key=openai_api_key
+        openai_api_key=openai_api_key,
+        streaming=False  # ストリーミングを無効化
     )
 
     # 最初のステップ
